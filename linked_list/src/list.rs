@@ -30,22 +30,38 @@ impl List {
 
     pub fn insert_head(&mut self, elem: i32) {
 
-        if (Rc::get_mut(&mut self.head)).is_some() {
-            self.head = Rc::new(Link::More(Box::new(Node {
-                    data: elem,
-                    next: self.head.clone()
-                })));
+        let mut next = Rc::new(Link::Empty);
 
-        } else {
-            self.head = Rc::new(Link::More(Box::new(Node {
-                    data: elem,
-                    next: Rc::new(Link::Empty)
-            })));
+        match *(self.head) {
+            Link::Empty => {},
+            Link::More(_) => next = self.head.clone()
         }
+
+        self.head = Rc::new(Link::More(Box::new(Node {
+            data: elem,
+            next: next
+        })));
         
     }
 
-    pub fn print(&self) {
-        println!("{:?}", self.head);
+
+    pub fn print_list(&self) {
+        let mut pointer = self.head.clone();
+        let mut next: Rc<Link>;
+        loop {
+            match *pointer {
+                Link::Empty => {
+                    println!("NULL");
+                    break;
+                },
+                Link::More(ref b) => {
+                    print!("{:?}", (**b).data);
+                    next = (**b).next.clone();
+                }
+            }
+
+            print!(" -> ");
+            pointer = next;
+        }
     }
 }
